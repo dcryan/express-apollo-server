@@ -1,7 +1,6 @@
 const url = require('url');
 const express = require('express');
 const mongoose = require('./mongoose');
-const headers = require('./headers');
 
 const router = express.Router();
 
@@ -18,7 +17,6 @@ router.get('/api/todos', (req, res) => {
 
   ToDo.find(searchQuery).exec((err, todos) => {
     if (err) return console.error(err);
-    res.writeHead(200, headers);
     res.write(JSON.stringify(todos));
     res.end();
   });
@@ -37,7 +35,6 @@ router.post('/api/todos', (req, res) => {
 
     console.log(`added ${savedTodo.name}`);
 
-    res.writeHead(200, headers);
     res.write('success');
     res.end();
   });
@@ -59,7 +56,6 @@ router.put('/api/todos', (req, res) => {
 
         console.log(`added ${savedTodo.name}`);
 
-        res.writeHead(200, headers);
         res.write('success');
         res.end();
       });

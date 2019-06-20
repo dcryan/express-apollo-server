@@ -1,23 +1,79 @@
-const express = require('express');
+import express, { json } from 'express';
+import { ApolloServer } from 'apollo-server-express';
+import cors from 'cors';
+
+import schema from './schema';
+import resolvers from './resolvers';
+import models, { sequelize } from './models';
 
 const app = express();
 const port = 4000;
-const headers = require('./headers');
+
+const server = new ApolloServer({
+  typeDefs: schema,
+  resolvers,
+  context: async () => ({
+    models,
+    me: await models.User.findByLogin('rwieruch'),
+  }),
+});
+server.applyMiddleware({ app });
 
 // create application/json parser
-app.use(express.json()); // to support JSON-encoded bodies
+app.use(json()); // to support JSON-encoded bodies
+app.use(cors());
 
 app.get('/', (req, res) => res.send('Hello World!'));
-app.options('/api/todos', (req, res) => {
-  res.writeHead(204, headers);
-  res.end();
-});
 
 app.use(require('./todos'));
 app.use(require('./kittens'));
 
-app.listen(port, () =>
-  console.log(`Server ready at http://localhost:${port}!`)
-);
+const eraseDatabaseOnSync = true;
+
+const createUsersWithMessages = async () => {
+  await models.User.create(
+    {
+      username: 'rwieruch',
+      messages: [
+        {
+          text: 'Published the Road to learn React',
+        },
+      ],
+    },
+    {
+      include: [models.Message],
+    }
+  );
+
+  await models.User.create(
+    {
+      username: 'ddavids',
+      messages: [
+        {
+          text: 'Happy to release ...',
+        },
+        {
+          text: 'Published a complete ...',
+        },
+      ],
+    },
+    {
+      include: [models.Message],
+    }
+  );
+};
+
+// TODO: Test if this async really needs to be there.
+sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
+  if (eraseDatabaseOnSync) {
+    createUsersWithMessages();
+  }
+
+  app.listen(port, () =>
+    console.log(
+      `Server ready at http://localhost:${port}${server.graphqlPath}!`
+    )
+  );
+});
 
 console.log('listening on port 4000...');

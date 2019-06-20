@@ -1,7 +1,6 @@
 const url = require('url');
 const express = require('express');
 const mongoose = require('./mongoose');
-const headers = require('./headers');
 
 const router = express.Router();
 
@@ -19,7 +18,6 @@ router.post('/api/kittens', (req, res) => {
   fluffy.save(function(err, savedFluffy) {
     if (err) {
       console.error(err);
-      res.writeHead(200, headers);
       res.write('error');
       res.end();
       return;
@@ -27,7 +25,6 @@ router.post('/api/kittens', (req, res) => {
 
     console.log(`${savedFluffy.name} is Saved`);
 
-    res.writeHead(200, headers);
     res.write('success');
     res.end();
   });
@@ -41,7 +38,6 @@ router.get('/api/kittens', (req, res) => {
     .select('name color')
     .exec((err, kittens) => {
       if (err) return console.error(err);
-      res.writeHead(200, headers);
       res.write(JSON.stringify(kittens));
       res.end();
     });
