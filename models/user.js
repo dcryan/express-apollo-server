@@ -46,17 +46,19 @@ const user = (sequelize, DataTypes) => {
       });
     }
 
-    User.beforeCreate(async createdUser => {
-      createdUser.password = await createdUser.generatePasswordHash();
-    });
-
-    // TODO: This doesn't have to be a prototype assignment
-    User.prototype.generatePasswordHash = async function() {
-      const saltRounds = 10;
-      return bcrypt.hash(this.password, saltRounds);
-    };
-
     return foundUser;
+  };
+  User.beforeCreate(async createdUser => {
+    createdUser.password = await createdUser.generatePasswordHash();
+  });
+
+  User.prototype.generatePasswordHash = async function() {
+    const saltRounds = 10;
+    return bcrypt.hash(this.password, saltRounds);
+  };
+
+  User.prototype.validatePassword = async function(password) {
+    return bcrypt.compare(password, this.password);
   };
 
   return User;
