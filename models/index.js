@@ -3,11 +3,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-console.log(process.env.MONGO_INITDB_ROOT_USERNAME);
-console.log(process.env.POSTGRES_DB);
-console.log(process.env.POSTGRES_USER);
-console.log(process.env.POSTGRES_PASSWORD);
-
 const sequelize = new Sequelize(
   process.env.POSTGRES_DB,
   process.env.POSTGRES_USER,
