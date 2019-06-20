@@ -58,6 +58,7 @@ const user = (sequelize, DataTypes) => {
   };
 
   User.prototype.validatePassword = async function(password) {
+    console.log('password', password);
     return bcrypt.compare(password, this.password);
   };
 

@@ -40,7 +40,9 @@ export default {
         throw new AuthenticationError('Invalid password.');
       }
 
-      return { toke: createToken(user, secret, '30m') };
+      console.log('user', user);
+
+      return { token: createToken(user, secret, '30m') };
     },
   },
 
