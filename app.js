@@ -47,7 +47,7 @@ app.use(require('./kittens'));
 
 const eraseDatabaseOnSync = true;
 
-const createUsersWithMessages = async () => {
+const createUsersWithMessages = async date => {
   await models.User.create(
     {
       username: 'rwieruch',
@@ -57,6 +57,7 @@ const createUsersWithMessages = async () => {
       messages: [
         {
           text: 'Published the Road to learn React',
+          createdAt: date.setSeconds(date.getSeconds() + 1),
         },
       ],
     },
@@ -73,9 +74,11 @@ const createUsersWithMessages = async () => {
       messages: [
         {
           text: 'Happy to release ...',
+          createdAt: date.setSeconds(date.getSeconds() + 1),
         },
         {
           text: 'Published a complete ...',
+          createdAt: date.setSeconds(date.getSeconds() + 1),
         },
       ],
     },
@@ -88,7 +91,7 @@ const createUsersWithMessages = async () => {
 // TODO: Test if this async really needs to be there.
 sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
   if (eraseDatabaseOnSync) {
-    createUsersWithMessages();
+    createUsersWithMessages(new Date());
   }
 
   app.listen(port, () =>
